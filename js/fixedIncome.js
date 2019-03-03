@@ -54,15 +54,19 @@ function calculateIncomeTax_fixed_old(incomeInfo) {
 
     var incomeTaxPerMonth = calculateIncomeTaxCurrentMonth_oldRule(incomeInfo.taxableIncome);
     var afterTaxIncomeTaxPerMonth = incomeInfo.preTaxIncome - incomeInfo.insurance - incomeTaxPerMonth;
+    var all = afterTaxIncomeTaxPerMonth + incomeInfo.insurance + incomeInfo.company;
 
     var taxTds_oldRule = '<td>旧政策个税</td>';
     var afterTaxTds_oldRule = '<td>旧政策税后</td>';
+    var allTds_oldRule = '<td>旧税后+保险账户</td>';
     for (var i = 0; i < 12; i++) {
         taxTds_oldRule += '<td>' + incomeTaxPerMonth.toFixed(2) + '</td>';
         afterTaxTds_oldRule += '<td>' + afterTaxIncomeTaxPerMonth.toFixed(2) + '</td>';
+        allTds_oldRule += '<td>' + all.toFixed(2) + '</td>';
     }
     taxTds_oldRule += '<td>' + (incomeTaxPerMonth * 12).toFixed(2) + '</td>';
     afterTaxTds_oldRule += '<td>' + (afterTaxIncomeTaxPerMonth * 12).toFixed(2) + '</td>';
+    allTds_oldRule += '<td>' + (all * 12).toFixed(2) + '</td>';
 
     var taxTr_oldRule = document.createElement('tr');
     taxTr_oldRule.innerHTML = taxTds_oldRule;
@@ -70,9 +74,13 @@ function calculateIncomeTax_fixed_old(incomeInfo) {
     var afterTaxTr_oldRule = document.createElement('tr');
     afterTaxTr_oldRule.innerHTML = afterTaxTds_oldRule;
 
+    var allTr_oldRule = document.createElement('tr');
+    allTr_oldRule.innerHTML = allTds_oldRule;
+
     var fixedIncome_tb = document.getElementById('fixedIncome_tb');
     fixedIncome_tb.appendChild(taxTr_oldRule);
     fixedIncome_tb.appendChild(afterTaxTr_oldRule);
+    fixedIncome_tb.appendChild(allTr_oldRule);
 }
 
 /**
@@ -91,7 +99,7 @@ function calculateIncomeTax_fixed_new(incomeInfo) {
     var afterTaxTds_newRule = '<td>新政策税后</td>';
     var insuranceTds_newRule = '<td>个人五险一金</td>';
     var companyTds_newRule = '<td>公司缴至个人账户</td>';
-    var allTds_newRule = '<td>税后+保险账户</td>';
+    var allTds_newRule = '<td>新税后+保险账户</td>';
     for (var i = 0; i < 12; i++) {
         taxableIncomeTotal += incomeInfo.taxableIncome;
         var incomeTaxCurrentMonth = calculateIncomeTaxCurrentMonth_newdRule(taxableIncomeTotal) - incomeTaxtotal;
@@ -131,10 +139,11 @@ function calculateIncomeTax_fixed_new(incomeInfo) {
     all_newRule.innerHTML = allTds_newRule;
 
     var fixedIncome_tb = document.getElementById('fixedIncome_tb');
-    fixedIncome_tb.appendChild(taxTr_newRule);
-    fixedIncome_tb.appendChild(afterTaxTr_newRule);
+
     fixedIncome_tb.appendChild(insurance_newRule);
     fixedIncome_tb.appendChild(company_newRule);
+    fixedIncome_tb.appendChild(taxTr_newRule);
+    fixedIncome_tb.appendChild(afterTaxTr_newRule);
     fixedIncome_tb.appendChild(all_newRule);
 }
 
