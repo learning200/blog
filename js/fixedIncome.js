@@ -124,7 +124,7 @@ function calculateIncomeTax_fixed_new(incomeInfo) {
     afterTaxTds_newRule += '<td>' + afterTaxIncomeTaxTotal.toFixed(2) + '</td>';
     insuranceTds_newRule += '<td>' + insuranceTotal.toFixed(2) + '</td>';
     companyTds_newRule += '<td>' + companyTotal.toFixed(2) + '</td>';
-    allTds_newRule += '<td>' + allTotal.toFixed(2) + '</td>';
+    allTds_newRule += '<td><b>' + allTotal.toFixed(2) + '</b></td>';
 
 
     var taxTr_newRule = document.createElement('tr');
