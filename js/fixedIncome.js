@@ -5,6 +5,7 @@ function calculateIncomeTax_fixed() {
     var preTaxIncome = document.getElementById('preTaxIncome').value;
     var insurance = document.getElementById('insurance').value;
     var specialDeduction = document.getElementById('specialDeduction').value;
+    var company = document.getElementById('company').value;
 
     if (!preTaxIncome || isNaN(preTaxIncome)) {
         alert('税前收入为空或非合法数字');
@@ -18,16 +19,22 @@ function calculateIncomeTax_fixed() {
         alert('专项扣除为非合法数字');
         return;
     }
+    if (isNaN(company)) {
+        alert('公司缴纳为非合法数字');
+        return;
+    }
     preTaxIncome = Number(preTaxIncome) || 0;
     insurance = Number(insurance) || 0;
     specialDeduction = Number(specialDeduction) || 0;
+    company = Number(company) || 0;
     var taxableIncome = preTaxIncome - insurance - specialDeduction - criticalLine;//应纳税所得额
 
     var incomeInfo = {
         "preTaxIncome" : preTaxIncome,
         "insurance" : insurance,
         "specialDeduction" : specialDeduction,
-        "taxableIncome" : taxableIncome
+        "taxableIncome" : taxableIncome,
+        "company": company,
     };
 
     clearList(document.getElementById('fixedIncome_tb'));
@@ -76,9 +83,15 @@ function calculateIncomeTax_fixed_new(incomeInfo) {
     var taxableIncomeTotal = 0;//累计年应纳税所得额
     var incomeTaxtotal = 0;//累计年缴纳个税
     var afterTaxIncomeTaxTotal = 0;//累计税后年收入
+    var insuranceTotal = 0;//累计个人缴纳五险一金
+    var companyTotal = 0;//公司缴纳至个人账户
+    var allTotal = 0;//个人累计
 
     var taxTds_newRule = '<td>新政策个税</td>';
     var afterTaxTds_newRule = '<td>新政策税后</td>';
+    var insuranceTds_newRule = '<td>个人五险一金</td>';
+    var companyTds_newRule = '<td>公司缴至个人账户</td>';
+    var allTds_newRule = '<td>税后+保险账户</td>';
     for (var i = 0; i < 12; i++) {
         taxableIncomeTotal += incomeInfo.taxableIncome;
         var incomeTaxCurrentMonth = calculateIncomeTaxCurrentMonth_newdRule(taxableIncomeTotal) - incomeTaxtotal;
@@ -88,19 +101,41 @@ function calculateIncomeTax_fixed_new(incomeInfo) {
         var afterTaxIncomeTaxCurrentMonth = incomeInfo.preTaxIncome - incomeInfo.insurance - incomeTaxCurrentMonth;
         afterTaxIncomeTaxTotal += afterTaxIncomeTaxCurrentMonth;
         afterTaxTds_newRule += '<td>' + afterTaxIncomeTaxCurrentMonth.toFixed(2) + '</td>';
+
+        insuranceTds_newRule += '<td>' + incomeInfo.insurance + '</td>';
+        insuranceTotal += incomeInfo.insurance;
+
+        companyTds_newRule += '<td>' + incomeInfo.company + '</td>';
+        companyTotal += incomeInfo.company;
+
+        var val = afterTaxIncomeTaxCurrentMonth + incomeInfo.insurance + incomeInfo.company;
+        allTds_newRule += '<td>' + val.toFixed(2) + '</td>';
+        allTotal += val;
     }
     taxTds_newRule += '<td>' + incomeTaxtotal.toFixed(2) + '</td>';
     afterTaxTds_newRule += '<td>' + afterTaxIncomeTaxTotal.toFixed(2) + '</td>';
+    insuranceTds_newRule += '<td>' + insuranceTotal.toFixed(2) + '</td>';
+    companyTds_newRule += '<td>' + companyTotal.toFixed(2) + '</td>';
+    allTds_newRule += '<td>' + allTotal.toFixed(2) + '</td>';
 
 
     var taxTr_newRule = document.createElement('tr');
     taxTr_newRule.innerHTML = taxTds_newRule;
     var afterTaxTr_newRule = document.createElement('tr');
     afterTaxTr_newRule.innerHTML = afterTaxTds_newRule;
+    var insurance_newRule = document.createElement('tr');
+    insurance_newRule.innerHTML = insuranceTds_newRule;
+    var company_newRule = document.createElement('tr');
+    company_newRule.innerHTML = companyTds_newRule;
+    var all_newRule = document.createElement('tr');
+    all_newRule.innerHTML = allTds_newRule;
 
     var fixedIncome_tb = document.getElementById('fixedIncome_tb');
     fixedIncome_tb.appendChild(taxTr_newRule);
     fixedIncome_tb.appendChild(afterTaxTr_newRule);
+    fixedIncome_tb.appendChild(insurance_newRule);
+    fixedIncome_tb.appendChild(company_newRule);
+    fixedIncome_tb.appendChild(all_newRule);
 }
 
 /**
